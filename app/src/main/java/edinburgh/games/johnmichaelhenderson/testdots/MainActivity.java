@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -45,14 +46,15 @@ public class MainActivity extends AppCompatActivity {
     //Countdown
     private long startTime = 2500;
     private final long noIntervals = 19;
-
+    private long dummyInterval = 100;
     private final int[] colourList =  new int[19];
 
     //counts how many times in a row app tries to find position.
     private int noAttempts = 0;
     private final double PERCENTAGEOFF = 0.95;
+    TextView scoreTextView;
 
-
+    final boolean[] isFirstButton = {true};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         setColours();
-
         final RelativeLayout rlayout = (RelativeLayout) findViewById(R.id.mainLayout);
+        scoreTextView = (TextView) findViewById(R.id.scoreTextView);
+        scoreTextView.setText("Welcome to Countdown Dots");
+
 
         //finding out how large screen is using listener, do all actions within this
         final ViewTreeObserver observer = rlayout.getViewTreeObserver();
@@ -74,31 +78,63 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Height value is " + String.valueOf(yScreenSize));
                 System.out.println("Width value is " + String.valueOf(xScreenSize));
 
-                for(int i=0;i<4;i++){
-                    initialiseButtonView(rlayout, xScreenSize, yScreenSize);
-                    rlayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }
+
+                initialiseButtonView(rlayout, xScreenSize, yScreenSize);
+                rlayout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
             }
         });
     }
-
-
-
 
     private void initialiseButtonView(final RelativeLayout layout, final int maxWidth, final int maxHeight){
         Log.i("Method called ", "initialiseButtonView");
         final Button bt = new Button(this);
 
         setButtonPosition(layout, maxWidth, maxHeight, bt);
+        //      set timer
         layout.addView(bt);
+        if(nextButtonToBePressed != 1){
+            setTimer(bt);
+        }else{
+            bt.setVisibility(View.GONE);
+            new CountDownTimer(startTime,dummyInterval){
+                @Override
+                public final void onTick(final long millisUntilFinished)
+                {
+
+                }
+                @Override
+                public final void onFinish()
+                {
+                    scoreTextView.setText("Click 1 to start game");
+                    bt.setVisibility(View.VISIBLE);
+                }
+
+            }.start();
+        }
+
+
         printHashMap();
         //change
         bt.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                if(nextButtonToBePressed ==1){
+                    scoreTextView.setText("Score:"+String.valueOf(nextButtonToBePressed));
+                    nextButtonToBePressed++;
+                    xPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
+                    yPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
+                    layout.removeView(bt);
+                    for(int i= 0;i<4;i++) {
+                        initialiseButtonView(layout, xScreenSize, yScreenSize);
+                    }
+                    printHashMap();
+                }else
+
                 if (Integer.valueOf(String.valueOf(bt.getText())) == nextButtonToBePressed) {
                     Log.i("Method called: onClick", "User clicked" + bt.getText());
+                    scoreTextView.setText("Score:" + String.valueOf(nextButtonToBePressed));
                     nextButtonToBePressed++;
                     xPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
                     yPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
@@ -106,14 +142,14 @@ public class MainActivity extends AppCompatActivity {
                     initialiseButtonView(layout, xScreenSize, yScreenSize);
                     printHashMap();
                 } else {
+                    scoreTextView.setText("You got "+String.valueOf(nextButtonToBePressed-1));
                     layout.removeAllViews();
                     nextButtonToBePressed = 1;
                     nextButtonToBeCreated = 1;
                     xPositions.clear();
                     yPositions.clear();
-                    for (int i = 0; i < 4; i++) {
-                        initialiseButtonView(layout, xScreenSize, yScreenSize);
-                    }
+                    initialiseButtonView(layout, xScreenSize, yScreenSize);
+
                 }
             }
         });
@@ -134,15 +170,14 @@ public class MainActivity extends AppCompatActivity {
         button.setWidth(BUTTONHW);
         button.setHeight(BUTTONHW);
 
-//      set timer
-        setTimer(button);
+
         nextButtonToBeCreated++;
 
     }
 
     private void setTimer(final Button button) {
         long newStartTime  = workOutStartTime();
-
+        final int timerValue =Integer.valueOf(String.valueOf(button.getText()));
         new CountDownTimer(newStartTime, newStartTime/noIntervals)
         {
             int colourIterator =0;
@@ -155,7 +190,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public final void onFinish()
             {
-               
+                if(nextButtonToBePressed > timerValue||nextButtonToBePressed==1){
+
+                }else{
+                    scoreTextView.setText("You got " + String.valueOf(nextButtonToBePressed));
+                    RelativeLayout layout = (RelativeLayout) findViewById(R.id.mainLayout);
+                    layout.removeAllViews();
+                    nextButtonToBePressed = 1;
+                    nextButtonToBeCreated = 1;
+                    xPositions.clear();
+                    yPositions.clear();
+
+                    initialiseButtonView(layout, xScreenSize, yScreenSize);
+                }
+
             }
         }.start();
     }
@@ -192,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
             noAttempts =0;
             button.setX(xTestValue);
             button.setY(yTestValue);
-            button.setTextSize(30);
+            button.setTextSize(25);
             button.setTextColor(ContextCompat.getColor(this, R.color.white));
             xPositions.put(nextButtonToBeCreated, xTestValue);
             yPositions.put(nextButtonToBeCreated, yTestValue);
