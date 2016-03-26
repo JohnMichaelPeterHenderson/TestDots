@@ -43,14 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<Integer,Integer> yPositions = new HashMap<>();
 
     //Countdown
-    private final long startTime = 2500;
-    private final double intervalTimeDouble = startTime/10;
-    private final long intervalTime = (long) intervalTimeDouble;
+    private long startTime = 2500;
+    private final long noIntervals = 19;
 
-    private final int[] colourList =  new int[10];
+    private final int[] colourList =  new int[19];
 
     //counts how many times in a row app tries to find position.
     private int noAttempts = 0;
+    private final double PERCENTAGEOFF = 0.95;
 
 
     @Override
@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setTimer(final Button button) {
         long newStartTime  = workOutStartTime();
-        //set colour list and time
-        new CountDownTimer(startTime, intervalTime)
+
+        new CountDownTimer(newStartTime, newStartTime/noIntervals)
         {
             int colourIterator =0;
             @Override
@@ -155,16 +155,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public final void onFinish()
             {
-                //TODO end game
+               
             }
         }.start();
     }
 
     private long workOutStartTime() {
 
+         long newStartTime = (long) (startTime*Math.pow(PERCENTAGEOFF,(nextButtonToBePressed-1)/10));
+        return newStartTime;
 
-
-        return 0;
     }
 
     private void setRandomPositions(int maxWidthParam, int maxHeightParam, Button button ){
@@ -212,16 +212,25 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void setColours() {
-        colourList[0] = ContextCompat.getColor(this, R.color.blue1);
-        colourList[1] = ContextCompat.getColor(this, R.color.blue2);
-        colourList[2] = ContextCompat.getColor(this, R.color.blue3);
-        colourList[3] = ContextCompat.getColor(this, R.color.blue4);
-        colourList[4] = ContextCompat.getColor(this, R.color.blue5);
-        colourList[5] = ContextCompat.getColor(this, R.color.red1);
-        colourList[6] = ContextCompat.getColor(this, R.color.red2);
-        colourList[7] = ContextCompat.getColor(this, R.color.red3);
-        colourList[8] = ContextCompat.getColor(this, R.color.red4);
-        colourList[9] = ContextCompat.getColor(this, R.color.red5);
+        colourList[0] = ContextCompat.getColor(this, R.color.color1);
+        colourList[1] = ContextCompat.getColor(this, R.color.color2);
+        colourList[2] = ContextCompat.getColor(this, R.color.color3);
+        colourList[3] = ContextCompat.getColor(this, R.color.color4);
+        colourList[4] = ContextCompat.getColor(this, R.color.color5);
+        colourList[5] = ContextCompat.getColor(this, R.color.color6);
+        colourList[6] = ContextCompat.getColor(this, R.color.color7);
+        colourList[7] = ContextCompat.getColor(this, R.color.color8);
+        colourList[8] = ContextCompat.getColor(this, R.color.color9);
+        colourList[9] = ContextCompat.getColor(this, R.color.color10);
+        colourList[10] = ContextCompat.getColor(this, R.color.color11);
+        colourList[11] = ContextCompat.getColor(this, R.color.color12);
+        colourList[12] = ContextCompat.getColor(this, R.color.color13);
+        colourList[13] = ContextCompat.getColor(this, R.color.color14);
+        colourList[14] = ContextCompat.getColor(this, R.color.color15);
+        colourList[15] = ContextCompat.getColor(this, R.color.color16);
+        colourList[16] = ContextCompat.getColor(this, R.color.color17);
+        colourList[17] = ContextCompat.getColor(this, R.color.color18);
+        colourList[18] = ContextCompat.getColor(this, R.color.color19);
     }
 
 
