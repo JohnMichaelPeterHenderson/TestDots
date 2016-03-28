@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (Integer.valueOf(String.valueOf(bt.getText())) == nextButtonToBePressed) {
                     Log.i("Method called: onClick", "User clicked" + bt.getText());
-                    scoreTextView.setText("Score:" + String.valueOf(nextButtonToBePressed));
+                    scoreTextView.setText(String.valueOf(nextButtonToBePressed));
                     nextButtonToBePressed++;
                     xPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
                     yPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
