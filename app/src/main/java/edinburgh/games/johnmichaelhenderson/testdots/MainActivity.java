@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
     final boolean[] isFirstButton = {true};
     boolean gameFinished = false;
+
+    private final int BUTTONSIZE = 80;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         setColours();
         final RelativeLayout rlayout =(RelativeLayout) findViewById(R.id.mainLayout);
         scoreTextView = (TextView) findViewById(R.id.scoreTextView);
-        scoreTextView.setText("Welcome to Countdown Dots");
+        scoreTextView.setText("Hit 1 to start");
 
 
         //finding out how large screen is using listener, do all actions within this
@@ -92,7 +95,18 @@ public class MainActivity extends AppCompatActivity {
         final Button bt = new Button(this);
 
         setButtonPosition(layout, maxWidth, maxHeight, bt);
-        //      set timer
+        bt.setBackgroundResource(R.drawable.background0);
+
+        final float scale = getResources().getDisplayMetrics().density;
+        int dp = BUTTONSIZE-(nextButtonToBePressed-1)/4;
+        int pixel;
+        if(dp <= 35){
+            pixel = 35;
+        }else{
+            pixel = (int)(dp * scale + 0.5f);
+        }
+
+        bt.setLayoutParams(new RelativeLayout.LayoutParams(pixel,pixel));
         layout.addView(bt);
         if(nextButtonToBePressed != 1){
             setTimer(bt);
@@ -123,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(nextButtonToBePressed ==1){
-                    scoreTextView.setText("Score:"+String.valueOf(nextButtonToBePressed));
+                    scoreTextView.setText(String.valueOf(nextButtonToBePressed));
+                    setTextColour(scoreTextView);
                     nextButtonToBePressed++;
                     xPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
                     yPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
@@ -145,8 +160,9 @@ public class MainActivity extends AppCompatActivity {
                     printHashMap();
                 } else {
                     //game ends
+                    Toast.makeText(getBaseContext(), "You scored "+String.valueOf(nextButtonToBePressed - 1), Toast.LENGTH_SHORT).show();
                     gameFinished = true;
-                    Intent toResult = new Intent(MainActivity.this,ResultActivity.class);
+                    Intent toResult = new Intent(MainActivity.this,MenuActivity.class);
                     toResult.putExtra("Score",nextButtonToBePressed-1);
                     startActivity(toResult);
                     finish();
@@ -158,6 +174,15 @@ public class MainActivity extends AppCompatActivity {
 //                    yPositions.clear();
 //                    initialiseButtonView(layout, xScreenSize, yScreenSize);
 
+                }
+            }
+
+            private void setTextColour(TextView tv) {
+                int colourIndex = nextButtonToBePressed/6;
+                if(colourIndex<19) {
+                    tv.setTextColor(colourList[colourIndex]);
+                }else{
+                    tv.setTextColor(colourList[18]);
                 }
             }
         });
@@ -188,11 +213,52 @@ public class MainActivity extends AppCompatActivity {
         final int timerValue =Integer.valueOf(String.valueOf(button.getText()));
         new CountDownTimer(newStartTime, newStartTime/noIntervals)
         {
-            int colourIterator =0;
+            int colourIterator =1;
             @Override
             public final void onTick(final long millisUntilFinished)
             {
-                button.setBackgroundColor(colourList[colourIterator]);
+                switch(colourIterator){
+                    case 1: button.setBackgroundResource(R.drawable.background1);
+                        break;
+                    case 2: button.setBackgroundResource(R.drawable.background2);
+                        break;
+                    case 3: button.setBackgroundResource(R.drawable.background3);
+                        break;
+                    case 4: button.setBackgroundResource(R.drawable.background4);
+                        break;
+                    case 5: button.setBackgroundResource(R.drawable.background5);
+                        break;
+                    case 6: button.setBackgroundResource(R.drawable.background6);
+                        break;
+                    case 7: button.setBackgroundResource(R.drawable.background7);
+                        break;
+                    case 8: button.setBackgroundResource(R.drawable.background8);
+                        break;
+                    case 9: button.setBackgroundResource(R.drawable.background9);
+                        break;
+                    case 10: button.setBackgroundResource(R.drawable.background10);
+                        break;
+                    case 11: button.setBackgroundResource(R.drawable.background11);
+                        break;
+                    case 12: button.setBackgroundResource(R.drawable.background12);
+                        break;
+                    case 13: button.setBackgroundResource(R.drawable.background13);
+                        break;
+                    case 14: button.setBackgroundResource(R.drawable.background14);
+                        break;
+                    case 15: button.setBackgroundResource(R.drawable.background15);
+                        break;
+                    case 16: button.setBackgroundResource(R.drawable.background16);
+                        break;
+                    case 17: button.setBackgroundResource(R.drawable.background17);
+                        break;
+                    case 18: button.setBackgroundResource(R.drawable.background18);
+                        break;
+                    case 19: button.setBackgroundResource(R.drawable.background19);
+                        break;
+                }
+
+//                button.setBackgroundColor(colourList[colourIterator]);
                 colourIterator++;
             }
             @Override
@@ -202,8 +268,12 @@ public class MainActivity extends AppCompatActivity {
 
                 }else{
                     //games ends
+
+
                     if(!gameFinished) {
-                        Intent toResult = new Intent(MainActivity.this, ResultActivity.class);
+                        Toast.makeText(getBaseContext(), "You scored "+String.valueOf(nextButtonToBePressed - 1), Toast.LENGTH_SHORT).show();
+                        gameFinished = true;
+                        Intent toResult = new Intent(MainActivity.this, MenuActivity.class);
                         toResult.putExtra("Score", nextButtonToBePressed - 1);
                         startActivity(toResult);
                         finish();
