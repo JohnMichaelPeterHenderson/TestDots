@@ -7,14 +7,52 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/white"
     tools:context="edinburgh.games.johnmichaelhenderson.testdots.MenuActivity">
 
-    <Button
+
+
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Game"
+        android:id="@+id/banner"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true" />
+    <Button
         android:id="@+id/startGameBt"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="184dp" />
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/startgamebutton"
+        android:layout_toLeftOf="@+id/howToPlayBt"
+        android:text="Start Game"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/banner"
+
+         />
+    <Button
+        android:id="@+id/howToPlayBt"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/howtoplaybutton"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="How To Play"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/banner"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_centerHorizontal="true" />
+    <Button
+        android:id="@+id/leaderboardBt"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/leaderboardbutton"
+
+        android:text="Leader board"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/banner"
+        android:layout_toRightOf="@+id/howToPlayBt"
+         />
 </RelativeLayout>

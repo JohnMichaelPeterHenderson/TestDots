@@ -17,7 +17,6 @@ import java.util.Random;
 import java.util.Set;
 
 
-
 public class MainActivity extends AppCompatActivity {
     protected int xScreenSize;
     protected int yScreenSize;
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         setColours();
-        final RelativeLayout rlayout = (RelativeLayout) findViewById(R.id.mainLayout);
+        final RelativeLayout rlayout =(RelativeLayout) findViewById(R.id.mainLayout);
         scoreTextView = (TextView) findViewById(R.id.scoreTextView);
         scoreTextView.setText("Welcome to Countdown Dots");
 
