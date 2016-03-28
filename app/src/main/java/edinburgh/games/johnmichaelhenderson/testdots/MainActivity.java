@@ -1,5 +1,6 @@
 package edinburgh.games.johnmichaelhenderson.testdots;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.content.ContextCompat;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<Integer,Integer> yPositions = new HashMap<>();
 
     //Countdown
-    private long startTime = 2500;
+    private long startTime = 4000;
     private final long noIntervals = 19;
     private long dummyInterval = 100;
     private final int[] colourList =  new int[19];
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     TextView scoreTextView;
 
     final boolean[] isFirstButton = {true};
+    boolean gameFinished = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,21 +98,22 @@ public class MainActivity extends AppCompatActivity {
         if(nextButtonToBePressed != 1){
             setTimer(bt);
         }else{
-            bt.setVisibility(View.GONE);
-            new CountDownTimer(startTime,dummyInterval){
-                @Override
-                public final void onTick(final long millisUntilFinished)
-                {
-
-                }
-                @Override
-                public final void onFinish()
-                {
-                    scoreTextView.setText("Click 1 to start game");
-                    bt.setVisibility(View.VISIBLE);
-                }
-
-            }.start();
+            //timer set so game not started before previous timers have run out.
+//            bt.setVisibility(View.GONE);
+//            new CountDownTimer(startTime,dummyInterval){
+//                @Override
+//                public final void onTick(final long millisUntilFinished)
+//                {
+//
+//                }
+//                @Override
+//                public final void onFinish()
+//                {
+//                    scoreTextView.setText("Click 1 to start game");
+//                    bt.setVisibility(View.VISIBLE);
+//                }
+//
+//            }.start();
         }
 
 
@@ -142,13 +145,19 @@ public class MainActivity extends AppCompatActivity {
                     initialiseButtonView(layout, xScreenSize, yScreenSize);
                     printHashMap();
                 } else {
-                    scoreTextView.setText("You got "+String.valueOf(nextButtonToBePressed-1));
-                    layout.removeAllViews();
-                    nextButtonToBePressed = 1;
-                    nextButtonToBeCreated = 1;
-                    xPositions.clear();
-                    yPositions.clear();
-                    initialiseButtonView(layout, xScreenSize, yScreenSize);
+                    //game ends
+                    gameFinished = true;
+                    Intent toResult = new Intent(MainActivity.this,ResultActivity.class);
+                    toResult.putExtra("Score",nextButtonToBePressed-1);
+                    startActivity(toResult);
+                    finish();
+//                    scoreTextView.setText("You got "+String.valueOf(nextButtonToBePressed-1));
+//                    layout.removeAllViews();
+//                    nextButtonToBePressed = 1;
+//                    nextButtonToBeCreated = 1;
+//                    xPositions.clear();
+//                    yPositions.clear();
+//                    initialiseButtonView(layout, xScreenSize, yScreenSize);
 
                 }
             }
@@ -193,15 +202,21 @@ public class MainActivity extends AppCompatActivity {
                 if(nextButtonToBePressed > timerValue||nextButtonToBePressed==1){
 
                 }else{
-                    scoreTextView.setText("You got " + String.valueOf(nextButtonToBePressed));
-                    RelativeLayout layout = (RelativeLayout) findViewById(R.id.mainLayout);
-                    layout.removeAllViews();
-                    nextButtonToBePressed = 1;
-                    nextButtonToBeCreated = 1;
-                    xPositions.clear();
-                    yPositions.clear();
-
-                    initialiseButtonView(layout, xScreenSize, yScreenSize);
+                    //games ends
+                    if(!gameFinished) {
+                        Intent toResult = new Intent(MainActivity.this, ResultActivity.class);
+                        toResult.putExtra("Score", nextButtonToBePressed - 1);
+                        startActivity(toResult);
+                        finish();
+                    }
+//                    scoreTextView.setText("You got " + String.valueOf(nextButtonToBePressed));
+//                    RelativeLayout layout = (RelativeLayout) findViewById(R.id.mainLayout);
+//                    layout.removeAllViews();
+//                    nextButtonToBePressed = 1;
+//                    nextButtonToBeCreated = 1;
+//                    xPositions.clear();
+//                    yPositions.clear();
+//                    initialiseButtonView(layout, xScreenSize, yScreenSize);
                 }
 
             }
