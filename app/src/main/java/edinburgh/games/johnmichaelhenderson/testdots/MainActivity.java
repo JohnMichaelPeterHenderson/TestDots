@@ -54,11 +54,14 @@ public class MainActivity extends AppCompatActivity {
     private int noAttempts = 0;
     private final double PERCENTAGEOFF = 0.95;
     TextView scoreTextView;
+    TextView initialTextView;
 
     final boolean[] isFirstButton = {true};
     boolean gameFinished = false;
 
     private final int BUTTONSIZE = 80;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +71,8 @@ public class MainActivity extends AppCompatActivity {
         setColours();
         final RelativeLayout rlayout =(RelativeLayout) findViewById(R.id.mainLayout);
         scoreTextView = (TextView) findViewById(R.id.scoreTextView);
-        scoreTextView.setText("Hit 1 to start");
+        initialTextView = (TextView) findViewById(R.id.initialTextView);
+        initialTextView.setText("Hit 1 to start");
 
 
         //finding out how large screen is using listener, do all actions within this
@@ -96,6 +100,9 @@ public class MainActivity extends AppCompatActivity {
 
         setButtonPosition(layout, maxWidth, maxHeight, bt);
         bt.setBackgroundResource(R.drawable.background0);
+        if(nextButtonToBeCreated == 2){
+            bt.getBackground().setAlpha(64);
+        }
 
         final float scale = getResources().getDisplayMetrics().density;
         int dp = BUTTONSIZE-(nextButtonToBePressed-1)/4;
@@ -136,7 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
+
                 if(nextButtonToBePressed ==1){
+                    initialTextView.setText("");
                     scoreTextView.setText(String.valueOf(nextButtonToBePressed));
                     setTextColour(scoreTextView);
                     nextButtonToBePressed++;
@@ -152,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 if (Integer.valueOf(String.valueOf(bt.getText())) == nextButtonToBePressed) {
                     Log.i("Method called: onClick", "User clicked" + bt.getText());
                     scoreTextView.setText(String.valueOf(nextButtonToBePressed));
+                    setTextColour(scoreTextView);
                     nextButtonToBePressed++;
                     xPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
                     yPositions.remove(Integer.valueOf(String.valueOf(bt.getText())));
@@ -162,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
                     //game ends
                     Toast.makeText(getBaseContext(), "You scored "+String.valueOf(nextButtonToBePressed - 1), Toast.LENGTH_SHORT).show();
                     gameFinished = true;
-                    Intent toResult = new Intent(MainActivity.this,MenuActivity.class);
+
+                    Intent toResult = new Intent(MainActivity.this,ResultActivity.class);
                     toResult.putExtra("Score",nextButtonToBePressed-1);
                     startActivity(toResult);
                     finish();
@@ -273,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                     if(!gameFinished) {
                         Toast.makeText(getBaseContext(), "You scored "+String.valueOf(nextButtonToBePressed - 1), Toast.LENGTH_SHORT).show();
                         gameFinished = true;
-                        Intent toResult = new Intent(MainActivity.this, MenuActivity.class);
+                        Intent toResult = new Intent(MainActivity.this, ResultActivity.class);
                         toResult.putExtra("Score", nextButtonToBePressed - 1);
                         startActivity(toResult);
                         finish();
@@ -329,7 +340,6 @@ public class MainActivity extends AppCompatActivity {
             xPositions.put(nextButtonToBeCreated, xTestValue);
             yPositions.put(nextButtonToBeCreated, yTestValue);
         }
-
     }
 
 
