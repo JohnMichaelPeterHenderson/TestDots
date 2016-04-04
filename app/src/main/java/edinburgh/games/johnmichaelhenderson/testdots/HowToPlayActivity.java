@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,6 +20,13 @@ public class HowToPlayActivity extends Activity {
     Button Bt1,Bt2,Bt3,Bt4,Bt5;
     RelativeLayout layout;
     int score;
+    protected int xScreenSize;
+    protected int yScreenSize;
+    private final int WIDTHBUFFER = 200;
+    private final int HEIGHTBUFFER = 170;
+    private final int BUTTONHW = 150;
+    private final int MINWIDTHPARAM = 16;
+    private final int MINHEIGHTPARAM = 66;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,39 +35,40 @@ public class HowToPlayActivity extends Activity {
         layout = (RelativeLayout) findViewById(R.id.helpLayout);
         Bt1 = (Button) findViewById(R.id.helpButton1);
         Bt2 = (Button) findViewById(R.id.helpButton2);
-        Bt3 = (Button) findViewById(R.id.helpButton3);
-        Bt4 = (Button) findViewById(R.id.helpButton4);
-        Bt5 = (Button) findViewById(R.id.helpButton5);
-
-
         TV2 = (TextView) findViewById(R.id.helpInstruction2TV);
-
         scoreTV = (TextView) findViewById(R.id.helpScoreTV);
 
-        resetViews();
+        final ViewTreeObserver observer = layout.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                //getting height and width of screen
+                yScreenSize = layout.getHeight();
+                xScreenSize = layout.getWidth();
 
-        firstPhase();
+
+                resetViews();
+
+                firstPhase();
+                layout.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+            }
+        });
+
 
     }
 
     private void resetViews(){
         Bt1.setVisibility(View.INVISIBLE);
         Bt2.setVisibility(View.INVISIBLE);
-        Bt3.setVisibility(View.INVISIBLE);
-        Bt4.setVisibility(View.INVISIBLE);
-        Bt5.setVisibility(View.INVISIBLE);
 
         Bt1.setEnabled(false);
         Bt2.setEnabled(false);
-        Bt3.setEnabled(false);
-        Bt4.setEnabled(false);
-        Bt5.setEnabled(false);
+
 
         Bt1.setText("");
         Bt2.setText("");
-        Bt3.setText("");
-        Bt4.setText("");
-        Bt5.setText("");
+
 
 
         TV2.setText("");
@@ -65,7 +76,8 @@ public class HowToPlayActivity extends Activity {
     }
 
     private void firstPhase() {
-        TV2.setText("Welcome to the Coontdoon, touch anywhere to continue.");
+        TV2.setText("Welcome to the Coontdoon, tap anywhere to continue..");
+
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,12 +88,12 @@ public class HowToPlayActivity extends Activity {
     }
 
     private void secondPhase(){
-        scoreTV.setText("The aim of the game is to hit the squares, like this one, in numerical order and before each turns red.");
+        layout.setOnClickListener(null);
         Bt1.setVisibility(View.VISIBLE);
         Bt1.setEnabled(true);
         Bt1.setText("1");
         setButtonBackground(Bt1, 2);
-        TV2.setText("Hit the square to continue.");
+        TV2.setText("The aim of the game is to hit the squares, like this one, in numerical order and before they turn red. Hit the square to continue..");
         Bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,12 +104,11 @@ public class HowToPlayActivity extends Activity {
     }
 
     private void thirdPhase(){
-        scoreTV.setText("Once clicked, a new square will appear.");
         Bt2.setVisibility(View.VISIBLE);
         Bt2.setEnabled(true);
         Bt2.setText("2");
         setButtonBackground(Bt2, 3);
-        TV2.setText("Hit the square to continue.");
+        TV2.setText("Once clicked, a new square will appear. Hit the square to continue..");
         Bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,8 +119,7 @@ public class HowToPlayActivity extends Activity {
     }
 
     private void fourthPhase(){
-        scoreTV.setText("This is where your score will appear, you get one point for every correctly selected square.");
-        TV2.setText("Click anywhere to continue.");
+        scoreTV.setText("This is where your score will appear, you get one point for every correctly selected square. Click anywhere to continue..");
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,8 +130,8 @@ public class HowToPlayActivity extends Activity {
     }
 
     private void fifthPhase(){
-        scoreTV.setText("Next the timers will be started on each square when it appears, try to hit them before they turn red!");
-        TV2.setText("Let's try to score 5, click anywhere to continue.");
+        layout.setOnClickListener(null);
+        TV2.setText("Let's try a practice game, try to score 5. Click anywhere to start..");
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,173 +142,106 @@ public class HowToPlayActivity extends Activity {
     }
 
     private void sixthPhase(){
+        layout.setOnClickListener(null);
         minigame();
 
     }
 
     private void minigame(){
-        boolean[] buttonsList = {false,false,false,false,false};
+
         score = 0;
         Bt1.setEnabled(true);
         Bt2.setEnabled(true);
-        Bt3.setEnabled(true);
-        Bt4.setEnabled(true);
-        Bt5.setEnabled(true);
+
         Bt1.setVisibility(View.INVISIBLE);
         Bt2.setVisibility(View.INVISIBLE);
-        Bt3.setVisibility(View.INVISIBLE);
-        Bt4.setVisibility(View.INVISIBLE);
-        Bt5.setVisibility(View.INVISIBLE);
-        showButton(buttonsList);
+        scoreTV.setGravity(Gravity.CENTER);
+        scoreTV.setTextSize(40);
+        showButton();
 
     }
 
-    private void showButton(final boolean[] buttonsList) {
-        Log.i("showButton","methodCalled");
-
-
-            int buttonNumber = pickButton(buttonsList);
-            switch (buttonNumber) {
-                case 0:
-                    Log.i("showButton","Button 1 being shown");
-                    Bt1.setVisibility(View.VISIBLE);
-                    setButtonBackground(Bt1, 6);
-                    Bt1.setText(String.valueOf(score+1));
-                    Bt1.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i("showButton","Button 1 clicked");
-                            score++;
-                            buttonsList[0] =true;
-                            checkIfFinished(buttonsList);
-                            Bt1.setVisibility(View.INVISIBLE);
-                            showButton(buttonsList);
-
-                        }
-                    });
-                    break;
-                case 1:
-                    Log.i("showButton","Button 2 being shown");
-                    Bt2.setVisibility(View.VISIBLE);
-                    setButtonBackground(Bt2, 6);
-                    Bt2.setText(String.valueOf(score+1));
-                    Bt2.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i("showButton","Button 2 clicked");
-                            score++;
-                            buttonsList[1] =true;
-                            checkIfFinished(buttonsList);
-                            Bt2.setVisibility(View.INVISIBLE);
-                            showButton(buttonsList);
-
-                        }
-                    });
-                    break;
-                case 2:
-                    Log.i("showButton","Button 3 being shown");
-                    Bt3.setVisibility(View.VISIBLE);
-                    setButtonBackground(Bt3, 6);
-                    Bt3.setText(String.valueOf(score+1));
-                    Bt3.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i("showButton","Button 3 clicked");
-                            score++;
-                            buttonsList[2] =true;
-                            checkIfFinished(buttonsList);
-                            Bt3.setVisibility(View.INVISIBLE);
-                            showButton(buttonsList);
-
-                        }
-                    });
-                    break;
-                case 3:
-                    Log.i("showButton","Button 4 being shown");
-                    Bt4.setVisibility(View.VISIBLE);
-                    setButtonBackground(Bt4, 6);
-                    Bt4.setText(String.valueOf(score+1));
-                    Bt4.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i("showButton","Button 4 clicked");
-                            score++;
-                            buttonsList[3] =true;
-                            checkIfFinished(buttonsList);
-                            Bt4.setVisibility(View.INVISIBLE);
-                            showButton(buttonsList);
-                        }
-                    });
-                    break;
-                case 4:
-                    Log.i("showButton","Button 5 being shown");
-                    Bt5.setVisibility(View.VISIBLE);
-                    setButtonBackground(Bt5, 6);
-                    Bt5.setText(String.valueOf(score+1));
-                    Bt5.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i("showButton","Button 5 clicked");
-                            score++;
-                            buttonsList[4] =true;
-                            checkIfFinished(buttonsList);
-                            Bt5.setVisibility(View.INVISIBLE);
-                            showButton(buttonsList);
-                        }
-                    });
-                    break;
-
+    private void lostGame(){
+        TV2.setText("Too slow! Let's try again, tap anywhere to continue..");
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetViews();
+                sixthPhase();
             }
+        });
+    }
+
+    private void seventhPhase(){
+        TV2.setText("You did it, now you're ready for the real game. Tap anywhere to go back to the menu..");
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent goHome = new Intent(HowToPlayActivity.this, MenuActivity.class);
+                startActivity(goHome);
+            }
+        });
+    }
+
+    private void showButton() {
+        Log.i("showButton", "methodCalled");
+
+            scoreTV.setText(String.valueOf(score));
+
+            Log.i("showButton", "Button 1 being shown");
+            final Button bt = new Button(this);
+            setPosition(bt);
+            setButtonBackground(bt, 6);
+
+
+            bt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.i("showButton", "Button 1 clicked");
+                    score++;
+                    bt.setEnabled(false);
+                    bt.setVisibility(View.INVISIBLE);
+
+                    if (score < 5) {
+
+                        showButton();
+                    } else {
+                       resetViews();
+                        seventhPhase();
+                    }
+
+
+                }
+            });
+
 
     }
 
-    private void checkIfFinished(boolean[] buttonsList){
-        Log.i("checkIfFinished","methodC called");
-        int howManyTrue = 0;
-        for(int i = 0;i<buttonsList.length;i++){
-            if(buttonsList[i]==true){
-                howManyTrue++;
-            }
-        }
-        Log.i("checkIfFinished","score is "+String.valueOf(score));
-        Log.i("checkIfFinished","howManyTrue is "+String.valueOf(howManyTrue));
-        if(howManyTrue == 5){
-            Log.i("checkIfFinished","Going home");
-            Intent goHome = new Intent(HowToPlayActivity.this, MenuActivity.class);
-            startActivity(goHome);
-        }else{
-            Log.i("checkIfFinished","Showing next button");
-            scoreTV.setText(String.valueOf(howManyTrue));
-            showButton(buttonsList);
-        }
+    private void setPosition(Button bt1) {
+        bt1.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
+
+        //add/subtract buffers to keep away from edges
+        int maxWidthParam = xScreenSize - WIDTHBUFFER;
+        int maxHeightParam = yScreenSize - HEIGHTBUFFER;
+
+        Random random = new Random();
+        int xTestValue = random.nextInt((maxWidthParam-MINWIDTHPARAM)+1) +MINWIDTHPARAM;
+        int yTestValue = random.nextInt((maxHeightParam-MINHEIGHTPARAM)+1) +MINHEIGHTPARAM;
+        bt1.setText(String.valueOf(score + 1));
+        bt1.setX(xTestValue);
+        bt1.setY(yTestValue);
+        bt1.setTextSize(25);
+        bt1.setTextColor(ContextCompat.getColor(this, R.color.white));
+
+        bt1.setWidth(BUTTONHW);
+        bt1.setHeight(BUTTONHW);
+        layout.addView(bt1);
+
     }
 
-    private int pickButton(boolean[] buttonsList) {
-        Log.i("pickButton","method called");
-        Random rand = new Random();
 
-        //first find out how many are false, if only one then returh that value.
-        int  remainingIndex = 0 ;
-        int howManyFalse =0;
-        for(int i = 0;i<buttonsList.length;i++){
-            if(buttonsList[i] == false){
-                remainingIndex = i;
-                howManyFalse++;
-            }
-        }
-        if(howManyFalse == 1){
-            return remainingIndex;
-        }else {
-            int temp = rand.nextInt(5);
-            if (buttonsList[temp] == false) {
-                Log.i("pickButton","returned "+String.valueOf(temp));
-                return temp;
 
-            } else {
-                return pickButton(buttonsList);
-            }
-        }
-    }
+
 
     private void setButtonBackground(final Button button,final int phase) {
         Log.i("setButtonBackground","method called");
@@ -373,12 +316,12 @@ public class HowToPlayActivity extends Activity {
             public void onFinish() {
                 switch(phase){
                     case 6:
-                        if(score>= Integer.valueOf(String.valueOf(button.getText()))){
-
-                        }else {
-                            scoreTV.setText("You were too slow, try again");
-                            minigame();
+                        if(button.isEnabled()){
+                            layout.removeView(button);
+                            lostGame();
                             break;
+                        }else {
+                            layout.removeView(button);
                         }
 
                 }
@@ -386,4 +329,7 @@ public class HowToPlayActivity extends Activity {
             }
         }.start();
     }
+
+
+
 }
