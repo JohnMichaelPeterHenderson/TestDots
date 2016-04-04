@@ -375,6 +375,10 @@ public class MainActivity extends AppCompatActivity {
         colourList[18] = ContextCompat.getColor(this, R.color.color19);
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
 
 
 }

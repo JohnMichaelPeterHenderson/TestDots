@@ -344,5 +344,9 @@ public class ResultActivity extends Activity {
         textList[12] ="<font color=#ffb400>Y</font><font color=#ffab00>o</font><font color=#ffa200>u</font><font color=#ff9900>r</font> <font color=#ff9000>H</font><font color=#fd8702>i</font><font color=#f87b05>g</font><font color=#f36e09>h</font><font color=#ee620c>s</font><font color=#e95610>c</font><font color=#e34913>o</font><font color=#de3d16>r</font><font color=#ffbd00>e</font>";
     }
 
+    @Override
+    public void onBackPressed() {
+    }
+
 
 }

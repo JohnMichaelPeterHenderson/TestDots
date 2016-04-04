@@ -53,7 +53,13 @@ public class MenuActivity extends Activity {
             }
         });
 
-
+        howToPlayBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent toInstructions = new Intent(MenuActivity.this, HowToPlayActivity.class);
+                startActivity(toInstructions);
+            }
+        });
 
 
 
@@ -108,6 +114,9 @@ public class MenuActivity extends Activity {
             yPositions.put(numberOfButtons, yTestValue);
             numberOfButtons++;
         }
+    }
+    @Override
+    public void onBackPressed() {
     }
 
 
