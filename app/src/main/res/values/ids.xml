@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string name="achievement_getting_started..">CgkI7cXG4e0BEAIQAg</string>
+    <string name="achievement_getting_better">CgkI7cXG4e0BEAIQAw</string>
+    <string name="achievement_semi_professional">CgkI7cXG4e0BEAIQBA</string>
+    <string name="achievement_professional_clicker">CgkI7cXG4e0BEAIQBQ</string>
+    <string name="achievement_fastest_fingers_in_the_west">CgkI7cXG4e0BEAIQBg</string>
+    <string name="achievement_prime">CgkI7cXG4e0BEAIQBw</string>
+    <string name="achievement_really_bored">CgkI7cXG4e0BEAIQCA</string>
+    <string name="achievement_bored">CgkI7cXG4e0BEAIQCQ</string>
+    <string name="achievement_humble">CgkI7cXG4e0BEAIQCg</string>
+    <string name="achievement_arrogant">CgkI7cXG4e0BEAIQCw</string>
+    <string name="achievement_leet">CgkI7cXG4e0BEAIQDA</string>
+
+    <string name="leaderboard_best_scores">CgkI7cXG4e0BEAIQAQ</string>
+    <string name="leaderboard_easy">CgkI7cXG4e0BEAIQDQ</string>
+    <string name="leaderboard_hard">CgkI7cXG4e0BEAIQDg</string>
+</resources>

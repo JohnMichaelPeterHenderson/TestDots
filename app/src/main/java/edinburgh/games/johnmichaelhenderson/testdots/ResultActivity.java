@@ -12,13 +12,21 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.plus.Plus;
+import com.google.example.games.basegameutils.BaseGameActivity;
 
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
 
-public class ResultActivity extends Activity {
+public class ResultActivity extends BaseGameActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener{
     TextView scoreTV;
     TextView scoreTV1;
     TextView highScoreTV;
@@ -40,7 +48,7 @@ public class ResultActivity extends Activity {
     private final int HEIGHTCLOSENESSBUFFER = 180;
     private final int WIDTHCLOSENESSBUFFER = 180;
     private int noAttempts = 0;
-
+    GoogleApiClient myClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +74,10 @@ public class ResultActivity extends Activity {
           //scoreTV1
         scoreTV1.setText(String.valueOf(score));
         startScoreColour();
+
+        checkConnection(score);
+
+
 
         final RelativeLayout rlayout =(RelativeLayout) findViewById(R.id.resultLayout);
         final ViewTreeObserver observer = rlayout.getViewTreeObserver();
@@ -102,6 +114,39 @@ public class ResultActivity extends Activity {
             }
         });
 
+        leaderBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isSignedIn()) {
+                    Toast.makeText(getBaseContext(), "Display leaderboard", Toast.LENGTH_SHORT).show();
+                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(
+                                    myClient, getString(R.string.leaderboard)),
+                            2);
+                }else{
+                    Toast.makeText(getBaseContext(),"You must be signed in to see the leaderboard",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+    private void checkConnection(int score) {
+
+        myClient = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+
+        if(isSignedIn()) {
+            Toast.makeText(getBaseContext(), "Submitting score", Toast.LENGTH_SHORT).show();
+            Games.Leaderboards.submitScore(myClient,
+                    getString(R.string.leaderboard),
+                    score);
+        }
     }
 
     private void createButton(final int xScreenSize,final int yScreenSize,final RelativeLayout layout, final int numberOfButtons){
@@ -349,4 +394,43 @@ public class ResultActivity extends Activity {
     }
 
 
+    @Override
+    public void onConnected(Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        myClient.connect();
+
+    }
+
+    @Override
+    public void onSignInFailed() {
+
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        myClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (myClient.isConnected()) {
+            myClient.disconnect();
+        }
+    }
 }

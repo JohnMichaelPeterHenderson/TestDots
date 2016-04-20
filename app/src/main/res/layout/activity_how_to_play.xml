@@ -72,17 +72,5 @@
         android:layout_marginRight="20dp"
         android:textColor="@color/white"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/continueButton"
-        android:width="80dp"
-        android:textSize="25dp"
-        android:height="80dp"
-        android:textColor="@color/white"
-        android:layout_alignBottom="@+id/helpButton2"
-        android:layout_centerHorizontal="true" />
-
 
 </RelativeLayout>

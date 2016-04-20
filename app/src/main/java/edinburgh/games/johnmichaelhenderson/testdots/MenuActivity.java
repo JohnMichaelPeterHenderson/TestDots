@@ -9,29 +9,29 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
-public class MenuActivity extends Activity {
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.plus.Plus;
+import com.google.example.games.basegameutils.BaseGameActivity;
+import com.google.android.gms.games.Games;
+
+public class MenuActivity extends BaseGameActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
     Button startGameBt;
     Button howToPlayBt;
     Button leaderBoardBt;
+    View signInBt;
+    Button signOutBt;
     ImageView iv;
 
-    protected int xScreenSize;
-    protected int yScreenSize;
-    private final int WIDTHBUFFER = 180;
-    private final int HEIGHTBUFFER = 150;
-    private final int BUTTONHW = 150;
-    private HashMap<Integer,Integer> xPositions = new HashMap<>();
-    private HashMap<Integer,Integer> yPositions = new HashMap<>();
-    private final int MINWIDTHPARAM = 0;
-    private final int MINHEIGHTPARAM = 50;
-    private final int HEIGHTCLOSENESSBUFFER = 180;
-    private final int WIDTHCLOSENESSBUFFER = 180;
-    private int noAttempts = 0;
+
+    GoogleApiClient myClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,11 @@ public class MenuActivity extends Activity {
         startGameBt = (Button) findViewById(R.id.startGameBt);
         howToPlayBt = (Button) findViewById(R.id.howToPlayBt);
         leaderBoardBt = (Button) findViewById(R.id.leaderboardBt);
+        signInBt = (View) findViewById(R.id.sign_in_button);
+        signOutBt = (Button) findViewById(R.id.sign_out_button);
         iv = (ImageView) findViewById(R.id.banner);
+
+        createClient();
 
 
         iv.setImageResource(R.mipmap.coontdoonbaner);
@@ -61,62 +65,103 @@ public class MenuActivity extends Activity {
             }
         });
 
-
-
-    }
-
-
-
-    private void setButtonPosition(RelativeLayout layout, int maxWidth, int maxHeight, final Button button,int numberOfButtons){
-        Log.i("Method called", "setButtonPosition");
-        button.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
-
-        //add/subtract buffers to keep away from edges
-        int maxWidthParam = maxWidth - WIDTHBUFFER;
-        int maxHeightParam = maxHeight - HEIGHTBUFFER;
-
-        setRandomPositions(maxWidthParam, maxHeightParam, button, numberOfButtons);
-
-        button.setText(" ");
-        button.setWidth(BUTTONHW);
-        button.setHeight(BUTTONHW);
-
-    }
-
-
-    private void setRandomPositions(int maxWidthParam, int maxHeightParam, Button button,int numberOfButtons ){
-        Log.i("Method called", "setRandomPositions");
-        //create random coordinates
-        Random random = new Random();
-        int xTestValue = random.nextInt((maxWidthParam-MINWIDTHPARAM)+1) +MINWIDTHPARAM;
-        int yTestValue = random.nextInt((maxHeightParam-MINHEIGHTPARAM)+1) +MINHEIGHTPARAM;
-
-        Set<Integer> keys = xPositions.keySet();
-        boolean overlaps = false;
-
-        //checks if random coordinates overlap with any existing buttons and if not then sets the new position else call method again
-        for(Integer i: keys){
-            if(Math.abs(xTestValue-xPositions.get(i))< WIDTHCLOSENESSBUFFER && Math.abs(yTestValue-yPositions.get(i))< HEIGHTCLOSENESSBUFFER ) {
-                overlaps = true;
-                break;
+        leaderBoardBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isSignedIn()) {
+                    Toast.makeText(getBaseContext(), "Display leaderboard", Toast.LENGTH_SHORT).show();
+                    startActivityForResult(Games.Leaderboards.getLeaderboardIntent(
+                                    myClient, getString(R.string.leaderboard)),
+                            2);
+                }else{
+                    Toast.makeText(getBaseContext(), "You must be signed in to see the leaderboardd", Toast.LENGTH_SHORT).show();
+                }
             }
-        }
+        });
 
-        if (overlaps && noAttempts <10) {
-            noAttempts++;
-            setRandomPositions(maxWidthParam, maxHeightParam, button, numberOfButtons);
-        }else{
-            noAttempts =0;
-            button.setX(xTestValue);
-            button.setY(yTestValue);
-            button.setTextColor(ContextCompat.getColor(this, R.color.white));
-            xPositions.put(numberOfButtons, xTestValue);
-            yPositions.put(numberOfButtons, yTestValue);
-            numberOfButtons++;
-        }
+        signInBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                beginUserInitiatedSignIn();
+                myClient.connect();
+            }
+        });
+
+        signOutBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signOut();
+                signInBt.setVisibility(View.VISIBLE);
+                signOutBt.setVisibility(View.GONE);
+                myClient.disconnect();
+            }
+        });
+
+
     }
+
+    private void createClient() {
+        Log.i("Create Client", "started");
+        myClient = new GoogleApiClient.Builder(this)
+                .addApi(Plus.API)
+                .addScope(Plus.SCOPE_PLUS_PROFILE)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+    }
+
+
+
+
+
     @Override
     public void onBackPressed() {
+    }
+
+
+    @Override
+    public void onSignInFailed() {
+        signOutBt.setVisibility(View.GONE);
+        signInBt.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void onSignInSucceeded() {
+        signInBt.setVisibility(View.GONE);
+        signOutBt.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.i("Connected", "Sucessful");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        myClient.connect();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.i("Connected","Failed");
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        myClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (myClient.isConnected()) {
+            myClient.disconnect();
+        }
     }
 
 
