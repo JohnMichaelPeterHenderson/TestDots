@@ -1,7 +1,9 @@
 package edinburgh.games.johnmichaelhenderson.testdots;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.content.ContextCompat;
@@ -73,6 +75,19 @@ public class ResultActivity extends BaseGameActivity implements GoogleApiClient.
         scoreTV.setText("You Scored");
           //scoreTV1
         scoreTV1.setText(String.valueOf(score));
+
+        //get highscore
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        int highScore = sharedPref.getInt("highScore", 0);
+        if(score>highScore){
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("highScore", score);
+            editor.commit();
+            highScore = score;
+        }
+
+        highScoreTV1.setText(String.valueOf(highScore));
+
         startScoreColour();
 
         checkConnection(score);

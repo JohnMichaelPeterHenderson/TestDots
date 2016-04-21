@@ -1,7 +1,9 @@
 package edinburgh.games.johnmichaelhenderson.testdots;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -47,6 +49,8 @@ public class MenuActivity extends BaseGameActivity implements GoogleApiClient.Co
 
         createClient();
 
+
+        checkSharedPref();
 
         iv.setImageResource(R.mipmap.coontdoonbaner);
         startGameBt.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +108,7 @@ public class MenuActivity extends BaseGameActivity implements GoogleApiClient.Co
         Log.i("Create Client", "started");
         myClient = new GoogleApiClient.Builder(this)
                 .addApi(Plus.API)
+                .addApi(Games.API)
                 .addScope(Plus.SCOPE_PLUS_PROFILE)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -111,7 +116,14 @@ public class MenuActivity extends BaseGameActivity implements GoogleApiClient.Co
 
     }
 
-
+    private void checkSharedPref(){
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        if(!sharedPref.contains("highScore")){
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putInt("highScore", 0);
+            editor.commit();
+        }
+    }
 
 
 
